@@ -30,12 +30,12 @@ partial class DayNightClassifierForm
     /// </summary>
     private void InitializeComponent()
     {
-        menuStrip1 = new MenuStrip();
+        menuStrip = new MenuStrip();
         fileToolStripMenuItem = new ToolStripMenuItem();
         openToolStripMenuItem = new ToolStripMenuItem();
         tableLayoutPanelMain = new TableLayoutPanel();
         groupBoxSourceImage = new GroupBox();
-        pictureBox1 = new PictureBox();
+        pictureBoxSourceImage = new PictureBox();
         tableLayoutPanelAdditionalInfo = new TableLayoutPanel();
         groupBoxInfo = new GroupBox();
         tableLayoutPanelInfo = new TableLayoutPanel();
@@ -43,26 +43,31 @@ partial class DayNightClassifierForm
         lblHueText = new Label();
         lblSaturationText = new Label();
         lblValueText = new Label();
+        lblResultClassificationValue = new Label();
+        lblHueValue = new Label();
+        lblSatValue = new Label();
+        lblBrightnessValue = new Label();
         groupBoxImageProcess = new GroupBox();
         btnClose = new Button();
-        menuStrip1.SuspendLayout();
+        openFileDialog = new OpenFileDialog();
+        menuStrip.SuspendLayout();
         tableLayoutPanelMain.SuspendLayout();
         groupBoxSourceImage.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBoxSourceImage).BeginInit();
         tableLayoutPanelAdditionalInfo.SuspendLayout();
         groupBoxInfo.SuspendLayout();
         tableLayoutPanelInfo.SuspendLayout();
         SuspendLayout();
         // 
-        // menuStrip1
+        // menuStrip
         // 
-        menuStrip1.ImageScalingSize = new Size(20, 20);
-        menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
-        menuStrip1.Location = new Point(0, 0);
-        menuStrip1.Name = "menuStrip1";
-        menuStrip1.Size = new Size(800, 28);
-        menuStrip1.TabIndex = 0;
-        menuStrip1.Text = "menuStrip1";
+        menuStrip.ImageScalingSize = new Size(20, 20);
+        menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
+        menuStrip.Location = new Point(0, 0);
+        menuStrip.Name = "menuStrip";
+        menuStrip.Size = new Size(800, 28);
+        menuStrip.TabIndex = 0;
+        menuStrip.Text = "menuStrip1";
         // 
         // fileToolStripMenuItem
         // 
@@ -96,7 +101,7 @@ partial class DayNightClassifierForm
         // 
         // groupBoxSourceImage
         // 
-        groupBoxSourceImage.Controls.Add(pictureBox1);
+        groupBoxSourceImage.Controls.Add(pictureBoxSourceImage);
         groupBoxSourceImage.Dock = DockStyle.Fill;
         groupBoxSourceImage.Location = new Point(3, 3);
         groupBoxSourceImage.Name = "groupBoxSourceImage";
@@ -105,14 +110,15 @@ partial class DayNightClassifierForm
         groupBoxSourceImage.TabStop = false;
         groupBoxSourceImage.Text = "Source image";
         // 
-        // pictureBox1
+        // pictureBoxSourceImage
         // 
-        pictureBox1.Dock = DockStyle.Fill;
-        pictureBox1.Location = new Point(3, 23);
-        pictureBox1.Name = "pictureBox1";
-        pictureBox1.Size = new Size(388, 390);
-        pictureBox1.TabIndex = 0;
-        pictureBox1.TabStop = false;
+        pictureBoxSourceImage.Dock = DockStyle.Fill;
+        pictureBoxSourceImage.Location = new Point(3, 23);
+        pictureBoxSourceImage.Name = "pictureBoxSourceImage";
+        pictureBoxSourceImage.Size = new Size(388, 390);
+        pictureBoxSourceImage.SizeMode = PictureBoxSizeMode.Zoom;
+        pictureBoxSourceImage.TabIndex = 0;
+        pictureBoxSourceImage.TabStop = false;
         // 
         // tableLayoutPanelAdditionalInfo
         // 
@@ -126,12 +132,11 @@ partial class DayNightClassifierForm
         tableLayoutPanelAdditionalInfo.Location = new Point(403, 3);
         tableLayoutPanelAdditionalInfo.Name = "tableLayoutPanelAdditionalInfo";
         tableLayoutPanelAdditionalInfo.RowCount = 3;
+        tableLayoutPanelAdditionalInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 200F));
         tableLayoutPanelAdditionalInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-        tableLayoutPanelAdditionalInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+        tableLayoutPanelAdditionalInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
         tableLayoutPanelAdditionalInfo.Size = new Size(394, 416);
         tableLayoutPanelAdditionalInfo.TabIndex = 1;
-        tableLayoutPanelAdditionalInfo.RowStyles[0].SizeType = SizeType.Absolute;
-        tableLayoutPanelAdditionalInfo.RowStyles[0].Height = 200;
         // 
         // groupBoxInfo
         // 
@@ -156,6 +161,10 @@ partial class DayNightClassifierForm
         tableLayoutPanelInfo.Controls.Add(lblHueText, 0, 1);
         tableLayoutPanelInfo.Controls.Add(lblSaturationText, 0, 2);
         tableLayoutPanelInfo.Controls.Add(lblValueText, 0, 3);
+        tableLayoutPanelInfo.Controls.Add(lblResultClassificationValue, 1, 0);
+        tableLayoutPanelInfo.Controls.Add(lblHueValue, 1, 1);
+        tableLayoutPanelInfo.Controls.Add(lblSatValue, 1, 2);
+        tableLayoutPanelInfo.Controls.Add(lblBrightnessValue, 1, 3);
         tableLayoutPanelInfo.Dock = DockStyle.Fill;
         tableLayoutPanelInfo.Location = new Point(3, 23);
         tableLayoutPanelInfo.Name = "tableLayoutPanelInfo";
@@ -175,7 +184,7 @@ partial class DayNightClassifierForm
         lblResultText.Name = "lblResultText";
         lblResultText.Size = new Size(183, 36);
         lblResultText.TabIndex = 0;
-        lblResultText.Text = "Result";
+        lblResultText.Text = "Result classify";
         lblResultText.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // lblHueText
@@ -211,12 +220,56 @@ partial class DayNightClassifierForm
         lblValueText.Text = "Value";
         lblValueText.TextAlign = ContentAlignment.MiddleCenter;
         // 
+        // lblResultClassificationValue
+        // 
+        lblResultClassificationValue.AutoSize = true;
+        lblResultClassificationValue.Dock = DockStyle.Fill;
+        lblResultClassificationValue.Location = new Point(194, 1);
+        lblResultClassificationValue.Name = "lblResultClassificationValue";
+        lblResultClassificationValue.Size = new Size(184, 36);
+        lblResultClassificationValue.TabIndex = 4;
+        lblResultClassificationValue.Text = "-";
+        lblResultClassificationValue.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // lblHueValue
+        // 
+        lblHueValue.AutoSize = true;
+        lblHueValue.Dock = DockStyle.Fill;
+        lblHueValue.Location = new Point(194, 38);
+        lblHueValue.Name = "lblHueValue";
+        lblHueValue.Size = new Size(184, 39);
+        lblHueValue.TabIndex = 5;
+        lblHueValue.Text = "-";
+        lblHueValue.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // lblSatValue
+        // 
+        lblSatValue.AutoSize = true;
+        lblSatValue.Dock = DockStyle.Fill;
+        lblSatValue.Location = new Point(194, 78);
+        lblSatValue.Name = "lblSatValue";
+        lblSatValue.Size = new Size(184, 38);
+        lblSatValue.TabIndex = 6;
+        lblSatValue.Text = "-";
+        lblSatValue.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // lblBrightnessValue
+        // 
+        lblBrightnessValue.AutoSize = true;
+        lblBrightnessValue.Dock = DockStyle.Fill;
+        lblBrightnessValue.Location = new Point(194, 117);
+        lblBrightnessValue.Name = "lblBrightnessValue";
+        lblBrightnessValue.Size = new Size(184, 39);
+        lblBrightnessValue.TabIndex = 7;
+        lblBrightnessValue.Text = "-";
+        lblBrightnessValue.TextAlign = ContentAlignment.MiddleCenter;
+        // 
         // groupBoxImageProcess
         // 
         groupBoxImageProcess.Dock = DockStyle.Fill;
-        groupBoxImageProcess.Location = new Point(3, 192);
+        groupBoxImageProcess.Location = new Point(3, 203);
         groupBoxImageProcess.Name = "groupBoxImageProcess";
-        groupBoxImageProcess.Size = new Size(388, 183);
+        groupBoxImageProcess.Size = new Size(388, 170);
         groupBoxImageProcess.TabIndex = 1;
         groupBoxImageProcess.TabStop = false;
         groupBoxImageProcess.Text = "Image process";
@@ -224,9 +277,9 @@ partial class DayNightClassifierForm
         // btnClose
         // 
         btnClose.Dock = DockStyle.Right;
-        btnClose.Location = new Point(297, 381);
+        btnClose.Location = new Point(297, 379);
         btnClose.Name = "btnClose";
-        btnClose.Size = new Size(94, 32);
+        btnClose.Size = new Size(94, 34);
         btnClose.TabIndex = 2;
         btnClose.Text = "Close";
         btnClose.UseVisualStyleBackColor = true;
@@ -238,14 +291,15 @@ partial class DayNightClassifierForm
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 450);
         Controls.Add(tableLayoutPanelMain);
-        Controls.Add(menuStrip1);
+        Controls.Add(menuStrip);
         Name = "DayNightClassifierForm";
+        StartPosition = FormStartPosition.CenterScreen;
         Text = "DayNightClassifier";
-        menuStrip1.ResumeLayout(false);
-        menuStrip1.PerformLayout();
+        menuStrip.ResumeLayout(false);
+        menuStrip.PerformLayout();
         tableLayoutPanelMain.ResumeLayout(false);
         groupBoxSourceImage.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBoxSourceImage).EndInit();
         tableLayoutPanelAdditionalInfo.ResumeLayout(false);
         groupBoxInfo.ResumeLayout(false);
         groupBoxInfo.PerformLayout();
@@ -257,12 +311,12 @@ partial class DayNightClassifierForm
 
     #endregion
 
-    private MenuStrip menuStrip1;
+    private MenuStrip menuStrip;
     private ToolStripMenuItem fileToolStripMenuItem;
     private ToolStripMenuItem openToolStripMenuItem;
     private TableLayoutPanel tableLayoutPanelMain;
     private GroupBox groupBoxSourceImage;
-    private PictureBox pictureBox1;
+    private PictureBox pictureBoxSourceImage;
     private TableLayoutPanel tableLayoutPanelAdditionalInfo;
     private GroupBox groupBoxInfo;
     private GroupBox groupBoxImageProcess;
@@ -272,4 +326,9 @@ partial class DayNightClassifierForm
     private Label lblSaturationText;
     private Label lblValueText;
     private Button btnClose;
+    private OpenFileDialog openFileDialog;
+    private Label lblResultClassificationValue;
+    private Label lblHueValue;
+    private Label lblSatValue;
+    private Label lblBrightnessValue;
 }
