@@ -1,70 +1,85 @@
 ﻿using CvDayNightClassifier.Core.DTO;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
 using Emgu.CV;
-using System.IO;
-using System.Threading.Tasks;
+using Emgu.CV.Structure;
+using System.Drawing;
 
 namespace CvDayNightClassifier.Core.Classifiers
 {
     public class DayNightClassifier
     {
-        private int _dilationCoreSize = 7;
+        private int _blurValue = 13;
 
-        private int _medianBlurKsize = 23;
+        private int _dilateHightlightSize = 11;
 
-        private int _binaryThreshold = 250;
+        private int _highlightThreshold = 250;
 
         private int _darkTimeThreshold = 100;
 
         public DayNightClassifierResultDTO ClassifyImage(string pathToImage)
         {
+            Mat grayMat = new Mat(pathToImage, ImreadModes.Grayscale);
+
+            Mat blurMat = new Mat();
+            CvInvoke.MedianBlur(grayMat, blurMat, _blurValue);
+
+            Mat highlightBinaryMask = GetHighlightBinaryMask(blurMat);
+
+            Mat removedHighlightMat = new Mat();
+            CvInvoke.BitwiseAnd(blurMat, blurMat, removedHighlightMat, highlightBinaryMask);
+
+            Mat hsvMat = ConvertGrayToHSV(grayMat);
+            var result = GetClassifierResult(hsvMat);
+
+            return result;
+        }
+
+        private DayNightClassifierResultDTO GetClassifierResult(Mat hsvMat)
+        {
+            Mat[] channels = hsvMat.Split();
+
+            MCvScalar channelsMeanValues = CvInvoke.Mean(hsvMat);
             var result = new DayNightClassifierResultDTO();
-
-            Mat mat = new(pathToImage, ImreadModes.Grayscale);
-            Mat blurMat = new();
-
-            CvInvoke.MedianBlur(mat, blurMat, _medianBlurKsize);
-
-            Mat otsuMask = GetBinaryMask(blurMat, _binaryThreshold, ThresholdType.Otsu); // too illuminated areas
-            Mat darkTimeMask = GetBinaryMask(blurMat, _darkTimeThreshold, ThresholdType.Binary);
-
-            Mat resultMask = new Mat();
-            CvInvoke.BitwiseOr(otsuMask, darkTimeMask, resultMask);
-
-            Mat resultMat = new Mat();
-
-            CvInvoke.BitwiseAnd(mat, mat, resultMat, resultMask);
-            CvInvoke.Imshow("result", resultMat);
-
-            Mat hsv = new Mat();
-
-            CvInvoke.CvtColor(resultMat, resultMat, ColorConversion.Gray2Bgr);
-            CvInvoke.CvtColor(resultMat, hsv, ColorConversion.Bgr2Hsv);
-
-            Mat[] channels = hsv.Split();
-
-            MCvScalar mean = CvInvoke.Mean(hsv);
-
-            result.HueValue = mean.V0;
-            result.SaturationValue = mean.V1;
-            result.BrightnessValue = mean.V2;
-            result.DayNightClassification = result.BrightnessValue > _darkTimeThreshold 
-                ? DayNightClassification.DAY 
+            result.HueValue = channelsMeanValues.V0;
+            result.SaturationValue = channelsMeanValues.V1;
+            result.BrightnessValue = channelsMeanValues.V2;
+            result.DayNightClassification = result.BrightnessValue > _darkTimeThreshold
+                ? DayNightClassification.DAY
                 : DayNightClassification.NIGHT;
 
             return result;
         }
 
-        private Mat GetBinaryMask(Mat mat, int threshold, ThresholdType thresholdType)
+        private Mat ConvertGrayToHSV(Mat grayMat)
         {
-            var grayMat = mat;
+            Mat bgrMat = new Mat();
+            CvInvoke.CvtColor(grayMat, bgrMat, ColorConversion.Gray2Bgr);
 
-            var binaryMat = new Mat();
-            CvInvoke.Threshold(grayMat, binaryMat, threshold,
-                255, thresholdType);
+            Mat hsvMat = new Mat();
+            CvInvoke.CvtColor(bgrMat, hsvMat, ColorConversion.Bgr2Hsv);
 
-            return binaryMat;
+            return hsvMat;
+        }
+
+        private Mat GetHighlightBinaryMask(Mat srcMat)
+        {
+            var highlightBinaryMask = new Mat();
+            CvInvoke.Threshold(srcMat, highlightBinaryMask, _highlightThreshold, 255, ThresholdType.Binary);
+
+            var dilateCore = CvInvoke.GetStructuringElement(ElementShape.Rectangle,
+                new Size(_dilateHightlightSize, _dilateHightlightSize), 
+                new Point(2, 2));
+
+            Mat dilatedMat = new Mat();
+            CvInvoke.Dilate(highlightBinaryMask, dilatedMat, dilateCore,
+                new Point(-1, -1), 1, BorderType.Default, new MCvScalar(255, 255, 255));
+
+            CvInvoke.Imshow("dil", dilatedMat);
+
+            Mat invertedMask = new Mat();
+            CvInvoke.BitwiseNot(dilatedMat, invertedMask);
+
+            return invertedMask;
         }
     }
 }

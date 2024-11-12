@@ -1,4 +1,5 @@
 ﻿using CvDayNightClassifier.Core.Classifiers;
+using Emgu.CV;
 
 namespace CvDayNightClassifier.Core.DTO
 {
@@ -6,7 +7,7 @@ namespace CvDayNightClassifier.Core.DTO
     {
         public DayNightClassification DayNightClassification { get; set; }
 
-        public byte[] HighlightMask { get; set; }
+        public Mat HighlightMask { get; set; }
 
         public double HueValue { get; set; }
 
