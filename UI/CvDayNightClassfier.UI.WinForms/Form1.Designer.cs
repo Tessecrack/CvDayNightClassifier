@@ -48,6 +48,7 @@ partial class DayNightClassifierForm
         lblSatValue = new Label();
         lblBrightnessValue = new Label();
         groupBoxImageProcess = new GroupBox();
+        pictureBoxHighlightMask = new PictureBox();
         btnClose = new Button();
         openFileDialog = new OpenFileDialog();
         menuStrip.SuspendLayout();
@@ -57,6 +58,8 @@ partial class DayNightClassifierForm
         tableLayoutPanelAdditionalInfo.SuspendLayout();
         groupBoxInfo.SuspendLayout();
         tableLayoutPanelInfo.SuspendLayout();
+        groupBoxImageProcess.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)pictureBoxHighlightMask).BeginInit();
         SuspendLayout();
         // 
         // menuStrip
@@ -184,7 +187,7 @@ partial class DayNightClassifierForm
         lblResultText.Name = "lblResultText";
         lblResultText.Size = new Size(183, 36);
         lblResultText.TabIndex = 0;
-        lblResultText.Text = "Result classify";
+        lblResultText.Text = "Classification result";
         lblResultText.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // lblHueText
@@ -266,13 +269,24 @@ partial class DayNightClassifierForm
         // 
         // groupBoxImageProcess
         // 
+        groupBoxImageProcess.Controls.Add(pictureBoxHighlightMask);
         groupBoxImageProcess.Dock = DockStyle.Fill;
         groupBoxImageProcess.Location = new Point(3, 203);
         groupBoxImageProcess.Name = "groupBoxImageProcess";
         groupBoxImageProcess.Size = new Size(388, 170);
         groupBoxImageProcess.TabIndex = 1;
         groupBoxImageProcess.TabStop = false;
-        groupBoxImageProcess.Text = "Image process";
+        groupBoxImageProcess.Text = "Highlight mask";
+        // 
+        // pictureBoxHighlightMask
+        // 
+        pictureBoxHighlightMask.Dock = DockStyle.Fill;
+        pictureBoxHighlightMask.Location = new Point(3, 23);
+        pictureBoxHighlightMask.Name = "pictureBoxHighlightMask";
+        pictureBoxHighlightMask.Size = new Size(382, 144);
+        pictureBoxHighlightMask.SizeMode = PictureBoxSizeMode.Zoom;
+        pictureBoxHighlightMask.TabIndex = 0;
+        pictureBoxHighlightMask.TabStop = false;
         // 
         // btnClose
         // 
@@ -305,6 +319,8 @@ partial class DayNightClassifierForm
         groupBoxInfo.PerformLayout();
         tableLayoutPanelInfo.ResumeLayout(false);
         tableLayoutPanelInfo.PerformLayout();
+        groupBoxImageProcess.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)pictureBoxHighlightMask).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -331,4 +347,5 @@ partial class DayNightClassifierForm
     private Label lblHueValue;
     private Label lblSatValue;
     private Label lblBrightnessValue;
+    private PictureBox pictureBoxHighlightMask;
 }

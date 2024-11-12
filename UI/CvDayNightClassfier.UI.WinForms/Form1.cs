@@ -1,4 +1,5 @@
 using CvDayNightClassifier.Core.Classifiers;
+using Emgu.CV;
 
 namespace CvDayNightClassfier.UI.WinForms;
 
@@ -23,9 +24,13 @@ public partial class DayNightClassifierForm : Form
                 var result = _classifier.ClassifyImage(openFileDialog.FileName);
 
                 lblResultClassificationValue.Text = result.DayNightClassification.ToString();
+                pictureBoxHighlightMask.Image     = result.HighlightMask.ToBitmap();
+
                 lblHueValue.Text        = result.HueValue.ToString();
                 lblSatValue.Text        = result.SaturationValue.ToString();
                 lblBrightnessValue.Text = result.BrightnessValue.ToString();
+
+                
             }
         }
         catch (Exception ex)

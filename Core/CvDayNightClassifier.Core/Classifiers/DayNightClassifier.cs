@@ -8,27 +8,22 @@ namespace CvDayNightClassifier.Core.Classifiers
 {
     public class DayNightClassifier
     {
-        private int _blurValue = 13;
+        private int _blurValue = 11;
 
-        private int _dilateHightlightSize = 11;
+        private int _dilateHightlightSize = 15;
 
         private int _highlightThreshold = 250;
 
-        private int _darkTimeThreshold = 100;
+        private int _darkTimeThreshold = 50;
 
         public DayNightClassifierResultDTO ClassifyImage(string pathToImage)
         {
             Mat grayMat = new Mat(pathToImage, ImreadModes.Grayscale);
 
-            Mat blurMat = new Mat();
-            CvInvoke.MedianBlur(grayMat, blurMat, _blurValue);
+            Mat removedHighlightMat = RemoveHighlight(grayMat);
 
-            Mat highlightBinaryMask = GetHighlightBinaryMask(blurMat);
+            Mat hsvMat = ConvertGrayToHSV(removedHighlightMat);
 
-            Mat removedHighlightMat = new Mat();
-            CvInvoke.BitwiseAnd(blurMat, blurMat, removedHighlightMat, highlightBinaryMask);
-
-            Mat hsvMat = ConvertGrayToHSV(grayMat);
             var result = GetClassifierResult(hsvMat);
 
             return result;
@@ -40,14 +35,33 @@ namespace CvDayNightClassifier.Core.Classifiers
 
             MCvScalar channelsMeanValues = CvInvoke.Mean(hsvMat);
             var result = new DayNightClassifierResultDTO();
-            result.HueValue = channelsMeanValues.V0;
+            result.HueValue        = channelsMeanValues.V0;
             result.SaturationValue = channelsMeanValues.V1;
             result.BrightnessValue = channelsMeanValues.V2;
             result.DayNightClassification = result.BrightnessValue > _darkTimeThreshold
                 ? DayNightClassification.DAY
                 : DayNightClassification.NIGHT;
 
+            Mat bgrHighlighMask = new Mat();
+            CvInvoke.CvtColor(hsvMat, bgrHighlighMask, ColorConversion.Hsv2Bgr);
+
+            result.HighlightMask = bgrHighlighMask;
+
             return result;
+        }
+
+        private Mat RemoveHighlight(Mat srcMat)
+        {
+            Mat blurMat = new Mat();
+            CvInvoke.MedianBlur(srcMat, blurMat, _blurValue);
+
+            Mat highlightBinaryMask = GetHighlightBinaryMask(blurMat);
+            Mat darkTimeMask        = GetDarkTimeMask(blurMat);
+
+            Mat overlayedMat = new Mat();
+            CvInvoke.BitwiseAnd(blurMat, darkTimeMask, overlayedMat, highlightBinaryMask);
+
+            return overlayedMat;
         }
 
         private Mat ConvertGrayToHSV(Mat grayMat)
@@ -66,20 +80,25 @@ namespace CvDayNightClassifier.Core.Classifiers
             var highlightBinaryMask = new Mat();
             CvInvoke.Threshold(srcMat, highlightBinaryMask, _highlightThreshold, 255, ThresholdType.Binary);
 
-            var dilateCore = CvInvoke.GetStructuringElement(ElementShape.Rectangle,
+            var dilateCore = CvInvoke.GetStructuringElement(ElementShape.Ellipse,
                 new Size(_dilateHightlightSize, _dilateHightlightSize), 
                 new Point(2, 2));
 
             Mat dilatedMat = new Mat();
             CvInvoke.Dilate(highlightBinaryMask, dilatedMat, dilateCore,
-                new Point(-1, -1), 1, BorderType.Default, new MCvScalar(255, 255, 255));
-
-            CvInvoke.Imshow("dil", dilatedMat);
+                new Point(-1, -1), 3, BorderType.Default, new MCvScalar(255, 255, 255));
 
             Mat invertedMask = new Mat();
             CvInvoke.BitwiseNot(dilatedMat, invertedMask);
 
             return invertedMask;
+        }
+
+        private Mat GetDarkTimeMask(Mat srcMat)
+        {
+            Mat darkTimeMask = new Mat();
+            CvInvoke.Threshold(srcMat, darkTimeMask, _darkTimeThreshold, 255, ThresholdType.Binary);
+            return darkTimeMask;
         }
     }
 }
