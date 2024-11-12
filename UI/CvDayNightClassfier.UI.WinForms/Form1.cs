@@ -21,14 +21,15 @@ public partial class DayNightClassifierForm : Form
             if (dialogResult == DialogResult.OK)
             {
                 pictureBoxSourceImage.Image = new Bitmap(openFileDialog.FileName);
-                var result = _classifier.ClassifyImage(openFileDialog.FileName);
+
+                var result = _classifier.ClassifyImage(openFileDialog.FileName); // классификация
 
                 lblResultClassificationValue.Text = result.DayNightClassification.ToString();
-                pictureBoxHighlightMask.Image     = result.HighlightMask.ToBitmap();
+                pictureBoxHighlightMask.Image     = result.RemovedHighlightImage.ToBitmap();
 
-                lblHueValue.Text        = result.HueValue.ToString();
-                lblSatValue.Text        = result.SaturationValue.ToString();
-                lblBrightnessValue.Text = result.BrightnessValue.ToString();
+                lblHueValue.Text        = ((int)result.HueValue).ToString();
+                lblSatValue.Text        = ((int)result.SaturationValue).ToString();
+                lblBrightnessValue.Text = ((int)result.BrightnessValue).ToString();
 
                 
             }

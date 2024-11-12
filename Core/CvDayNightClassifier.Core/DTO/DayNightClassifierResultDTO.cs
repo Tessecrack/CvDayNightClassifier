@@ -5,14 +5,29 @@ namespace CvDayNightClassifier.Core.DTO
 {
     public class DayNightClassifierResultDTO
     {
+        /// <summary>
+        /// Классификация день/ночь.
+        /// </summary>
         public DayNightClassification DayNightClassification { get; set; }
 
-        public Mat HighlightMask { get; set; }
+        /// <summary>
+        /// Изображение без засветов.
+        /// </summary>
+        public Mat RemovedHighlightImage { get; set; }
 
+        /// <summary>
+        /// Тон изображения RemovedHighlightImage.
+        /// </summary>
         public double HueValue { get; set; }
 
+        /// <summary>
+        /// Насыщенность изображения RemovedHighlightImage.
+        /// </summary>
         public double SaturationValue { get; set; }
 
+        /// <summary>
+        /// Яркость изображения RemovedHighlightImage.
+        /// </summary>
         public double BrightnessValue { get; set; }
     }
 }

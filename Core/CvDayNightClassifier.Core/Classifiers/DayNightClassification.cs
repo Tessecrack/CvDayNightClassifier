@@ -1,6 +1,6 @@
 ﻿namespace CvDayNightClassifier.Core.Classifiers
 {
-    public enum DayNightClassification
+    public enum DayNightClassification : byte
     {
         DAY,
         NIGHT

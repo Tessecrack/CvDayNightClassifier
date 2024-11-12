@@ -231,7 +231,7 @@ partial class DayNightClassifierForm
         lblResultClassificationValue.Name = "lblResultClassificationValue";
         lblResultClassificationValue.Size = new Size(184, 36);
         lblResultClassificationValue.TabIndex = 4;
-        lblResultClassificationValue.Text = "-";
+        lblResultClassificationValue.Text = "DAY/NIGHT";
         lblResultClassificationValue.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // lblHueValue
@@ -276,7 +276,7 @@ partial class DayNightClassifierForm
         groupBoxImageProcess.Size = new Size(388, 170);
         groupBoxImageProcess.TabIndex = 1;
         groupBoxImageProcess.TabStop = false;
-        groupBoxImageProcess.Text = "Highlight mask";
+        groupBoxImageProcess.Text = "Image without highlights";
         // 
         // pictureBoxHighlightMask
         // 
