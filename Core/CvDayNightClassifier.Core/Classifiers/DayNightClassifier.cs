@@ -9,7 +9,7 @@ namespace CvDayNightClassifier.Core.Classifiers
     public class DayNightClassifier
     {
         /// <summary>
-        /// Размер ядра блюра.
+        /// Размер ядра медианного блюра.
         /// </summary>
         private readonly int _blurValue = 11; // ТОЛЬКО НЕЧЕТНЫЕ
 
