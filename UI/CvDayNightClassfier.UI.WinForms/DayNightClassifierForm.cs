@@ -26,9 +26,6 @@ public partial class DayNightClassifierForm : Form
 
                 lblResultClassificationValue.Text = result.DayNightClassification.ToString();
                 pictureBoxHighlightMask.Image     = result.RemovedHighlightImage.ToBitmap();
-
-                lblHueValue.Text        = ((int)result.HueValue).ToString();
-                lblSatValue.Text        = ((int)result.SaturationValue).ToString();
                 lblBrightnessValue.Text = ((int)result.BrightnessValue).ToString();
 
                 

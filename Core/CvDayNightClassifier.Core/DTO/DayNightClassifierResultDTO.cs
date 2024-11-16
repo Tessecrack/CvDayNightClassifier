@@ -16,16 +16,6 @@ namespace CvDayNightClassifier.Core.DTO
         public Mat RemovedHighlightImage { get; set; }
 
         /// <summary>
-        /// Тон изображения RemovedHighlightImage.
-        /// </summary>
-        public double HueValue { get; set; }
-
-        /// <summary>
-        /// Насыщенность изображения RemovedHighlightImage.
-        /// </summary>
-        public double SaturationValue { get; set; }
-
-        /// <summary>
         /// Яркость изображения RemovedHighlightImage.
         /// </summary>
         public double BrightnessValue { get; set; }

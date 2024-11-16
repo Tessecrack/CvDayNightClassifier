@@ -37,7 +37,7 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// Метод классификации день/ночь по изображению.
         /// </summary>
         /// <param name="pathToImage">Путь к изображению.</param>
-        /// <returns>Объект, содержащий результат классификации, HSV-значения, итоговую маску засветов.</returns>
+        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску засветов.</returns>
         public DayNightClassifierResultDTO ClassifyImage(string pathToImage)
         {
             Mat grayMat = new Mat(pathToImage, ImreadModes.Grayscale);
@@ -49,35 +49,26 @@ namespace CvDayNightClassifier.Core.Classifiers
         {
             Mat removedHighlightsMat = RemoveHighlights(grayMat);
 
-            Mat hsvMat = ConvertGrayToHSV(removedHighlightsMat);
-
-            var result = GetClassifierResult(hsvMat);
+            var result = GetClassifierResult(removedHighlightsMat);
 
             return result;
         }
 
         /// <summary>
-        /// Классифицирует входную матрицу в формате HSV.
+        /// Классифицирует входную матрицу в оттенках серого.
         /// </summary>
-        /// <param name="hsvMat">Матрица в формате HSV.</param>
-        /// <returns>Объект, содержащий результат классификации, HSV-значения, итоговую маску засветов.</returns>
-        private DayNightClassifierResultDTO GetClassifierResult(Mat hsvMat)
+        /// <param name="grayMat">Матрица в оттенках серого.</param>
+        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску засветов.</returns>
+        private DayNightClassifierResultDTO GetClassifierResult(Mat grayMat)
         {
-            Mat[] channels = hsvMat.Split();
-
-            MCvScalar channelsMeanValues = CvInvoke.Mean(hsvMat);
+            MCvScalar channelsMeanValues = CvInvoke.Mean(grayMat);
             var result = new DayNightClassifierResultDTO();
-            result.HueValue        = channelsMeanValues.V0;
-            result.SaturationValue = channelsMeanValues.V1;
-            result.BrightnessValue = channelsMeanValues.V2;
+            result.BrightnessValue = channelsMeanValues.V0;
             result.DayNightClassification = result.BrightnessValue > _darkTimeClassifyValue
                 ? DayNightClassification.DAY
                 : DayNightClassification.NIGHT;
 
-            Mat bgrHighlighMask = new Mat();
-            CvInvoke.CvtColor(hsvMat, bgrHighlighMask, ColorConversion.Hsv2Bgr);
-
-            result.RemovedHighlightImage = bgrHighlighMask;
+            result.RemovedHighlightImage = grayMat;
 
             return result;
         }
@@ -105,22 +96,6 @@ namespace CvDayNightClassifier.Core.Classifiers
             CvInvoke.BitwiseAnd(blurMat, darkTimeMask, overlayedMat, highlightsBinaryMask);
 
             return overlayedMat;
-        }
-        
-        /// <summary>
-        /// Конвретация вхожного изображения в оттенках серого в формат HSV.
-        /// </summary>
-        /// <param name="grayMat">Изображение в оттенках серого</param>
-        /// <returns>Изображение в формате HSV.</returns>
-        private Mat ConvertGrayToHSV(Mat grayMat)
-        {
-            Mat bgrMat = new Mat();
-            CvInvoke.CvtColor(grayMat, bgrMat, ColorConversion.Gray2Bgr);
-
-            Mat hsvMat = new Mat();
-            CvInvoke.CvtColor(bgrMat, hsvMat, ColorConversion.Bgr2Hsv);
-
-            return hsvMat;
         }
 
         /// <summary>
