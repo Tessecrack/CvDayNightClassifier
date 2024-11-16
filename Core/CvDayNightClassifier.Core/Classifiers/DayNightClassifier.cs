@@ -42,6 +42,11 @@ namespace CvDayNightClassifier.Core.Classifiers
         {
             Mat grayMat = new Mat(pathToImage, ImreadModes.Grayscale);
 
+            return ClassifyImageImpl(grayMat);
+        }
+
+        private DayNightClassifierResultDTO ClassifyImageImpl(Mat grayMat)
+        {
             Mat removedHighlightsMat = RemoveHighlights(grayMat);
 
             Mat hsvMat = ConvertGrayToHSV(removedHighlightsMat);
