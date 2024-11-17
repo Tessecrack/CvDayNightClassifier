@@ -137,7 +137,7 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// <summary>
         /// Получение маски с низким порогом бинаризации (_lowerThreshold).
         /// </summary>
-        /// <param name="srcMat">Изображение в оттенках серого.</param>
+        /// <param name="srcMat">Изображение с блюром в оттенках серого.</param>
         /// <returns>Маска с низким порогом бинаризации.</returns>
         private Mat GetLowerThresholdMask(Mat srcMat)
         {
