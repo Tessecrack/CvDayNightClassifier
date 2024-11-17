@@ -11,7 +11,7 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// <summary>
         /// Размер ядра медианного блюра.
         /// </summary>
-        private readonly int _blurValue = 11; // ТОЛЬКО НЕЧЕТНЫЕ
+        private readonly int _medianBlurValue = 11;
 
         /// <summary>
         /// Размер ядра дилатации для применения на бинарной маске засветов.
@@ -84,12 +84,13 @@ namespace CvDayNightClassifier.Core.Classifiers
         private Mat RemoveHighlights(Mat srcMat)
         {
             Mat blurMat = new Mat();
-            CvInvoke.MedianBlur(srcMat, blurMat, _blurValue);
+            CvInvoke.MedianBlur(srcMat, blurMat, _medianBlurValue);
 
+            // маска с высоким порогом (_upperThreshold)
             // получение маски засветов (черное - засвет)
             Mat upperThresholdBinaryMask = GetHighlightBinaryMask(blurMat);
 
-            // маска с низким порогом (_darkTimeThreshold) бинаризации
+            // маска с низким порогом (_lowerThreshold) бинаризации
             // (белое - предполагаемый день, черное - предполагаемая ночь)
             Mat lowerThresholdBinaryMask         = GetLowerThresholdMask(blurMat);
 
@@ -104,9 +105,9 @@ namespace CvDayNightClassifier.Core.Classifiers
         }
 
         /// <summary>
-        /// Выявление диллатированой бинарной маски засветов.
+        /// Выявление диллатированной бинарной маски засветов.
         /// </summary>
-        /// <param name="srcMat">Изображение в оттенках серого.</param>
+        /// <param name="srcMat">Изображение с блюром в оттенках серого.</param>
         /// <returns>Бинарная маска засветов (черное - засвет).</returns>
         private Mat GetHighlightBinaryMask(Mat srcMat)
         {
