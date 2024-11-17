@@ -26,7 +26,7 @@ public partial class DayNightClassifierForm : Form
 
                 lblResultClassificationValue.Text = result.DayNightClassification.ToString();
                 pictureBoxClassificationMask.Image     = result.ClassificationMask.ToBitmap();
-                lblBrightnessValue.Text = result.ClassificationValue.ToString("0.000");
+                lblBrightnessValue.Text = result.ClassificationValue.ToString("0.00000");
 
                 
             }
