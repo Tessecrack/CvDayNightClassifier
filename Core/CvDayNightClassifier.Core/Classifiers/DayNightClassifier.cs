@@ -57,21 +57,21 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// <summary>
         /// Классифицирует входную бинарную матрицу классификации.
         /// </summary>
-        /// <param name="binaryRemovedHighlightsMat">Бинарная матрица классификации.</param>
+        /// <param name="binaryClassificationMask">Бинарная матрица классификации.</param>
         /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску классификации.</returns>
-        private DayNightClassifierResultDTO GetClassifierResult(Mat binaryRemovedHighlightsMat)
+        private DayNightClassifierResultDTO GetClassifierResult(Mat binaryClassificationMask)
         {
             var result = new DayNightClassifierResultDTO();
 
-            var whitePixels = CvInvoke.CountNonZero(binaryRemovedHighlightsMat);
+            var whitePixels = CvInvoke.CountNonZero(binaryClassificationMask);
 
-            result.ClassificationValue = (float)whitePixels / (float)(binaryRemovedHighlightsMat.Width * binaryRemovedHighlightsMat.Height);
+            result.ClassificationValue = (float)whitePixels / (float)(binaryClassificationMask.Width * binaryClassificationMask.Height);
 
             result.DayNightClassification = result.ClassificationValue > _darkTimeClassifyValue
                 ? DayNightClassification.DAY
                 : DayNightClassification.NIGHT;
 
-            result.ClassificationMask = binaryRemovedHighlightsMat;
+            result.ClassificationMask = binaryClassificationMask;
 
             return result;
         }
