@@ -13,11 +13,11 @@ namespace CvDayNightClassifier.Core.DTO
         /// <summary>
         /// Изображение без засветов.
         /// </summary>
-        public Mat RemovedHighlightImage { get; set; }
+        public Mat ClassificationMask { get; set; }
 
         /// <summary>
         /// Яркость изображения RemovedHighlightImage.
         /// </summary>
-        public double BrightnessValue { get; set; }
+        public float ClassificationValue { get; set; }
     }
 }

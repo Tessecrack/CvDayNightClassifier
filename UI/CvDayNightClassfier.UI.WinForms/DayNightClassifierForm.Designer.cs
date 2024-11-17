@@ -40,11 +40,11 @@ partial class DayNightClassifierForm
         groupBoxInfo = new GroupBox();
         tableLayoutPanelInfo = new TableLayoutPanel();
         lblBrightnessValue = new Label();
-        lblBrightnessText = new Label();
+        lblClassificationText = new Label();
         lblResultText = new Label();
         lblResultClassificationValue = new Label();
         groupBoxImageProcess = new GroupBox();
-        pictureBoxHighlightMask = new PictureBox();
+        pictureBoxClassificationMask = new PictureBox();
         btnClose = new Button();
         openFileDialog = new OpenFileDialog();
         menuStrip.SuspendLayout();
@@ -55,7 +55,7 @@ partial class DayNightClassifierForm
         groupBoxInfo.SuspendLayout();
         tableLayoutPanelInfo.SuspendLayout();
         groupBoxImageProcess.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)pictureBoxHighlightMask).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBoxClassificationMask).BeginInit();
         SuspendLayout();
         // 
         // menuStrip
@@ -157,7 +157,7 @@ partial class DayNightClassifierForm
         tableLayoutPanelInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
         tableLayoutPanelInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
         tableLayoutPanelInfo.Controls.Add(lblBrightnessValue, 1, 1);
-        tableLayoutPanelInfo.Controls.Add(lblBrightnessText, 0, 1);
+        tableLayoutPanelInfo.Controls.Add(lblClassificationText, 0, 1);
         tableLayoutPanelInfo.Controls.Add(lblResultText, 0, 0);
         tableLayoutPanelInfo.Controls.Add(lblResultClassificationValue, 1, 0);
         tableLayoutPanelInfo.Dock = DockStyle.Fill;
@@ -166,30 +166,30 @@ partial class DayNightClassifierForm
         tableLayoutPanelInfo.RowCount = 2;
         tableLayoutPanelInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
         tableLayoutPanelInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 10F));
-        tableLayoutPanelInfo.Size = new Size(382, 23);
+        tableLayoutPanelInfo.Size = new Size(382, 88);
         tableLayoutPanelInfo.TabIndex = 0;
         // 
         // lblBrightnessValue
         // 
         lblBrightnessValue.AutoSize = true;
         lblBrightnessValue.Dock = DockStyle.Fill;
-        lblBrightnessValue.Location = new Point(194, 12);
+        lblBrightnessValue.Location = new Point(194, 47);
         lblBrightnessValue.Name = "lblBrightnessValue";
-        lblBrightnessValue.Size = new Size(184, 10);
+        lblBrightnessValue.Size = new Size(184, 40);
         lblBrightnessValue.TabIndex = 9;
         lblBrightnessValue.Text = "-";
         lblBrightnessValue.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // lblBrightnessText
+        // lblClassificationText
         // 
-        lblBrightnessText.AutoSize = true;
-        lblBrightnessText.Dock = DockStyle.Fill;
-        lblBrightnessText.Location = new Point(4, 12);
-        lblBrightnessText.Name = "lblBrightnessText";
-        lblBrightnessText.Size = new Size(183, 10);
-        lblBrightnessText.TabIndex = 8;
-        lblBrightnessText.Text = "Brightness";
-        lblBrightnessText.TextAlign = ContentAlignment.MiddleCenter;
+        lblClassificationText.AutoSize = true;
+        lblClassificationText.Dock = DockStyle.Fill;
+        lblClassificationText.Location = new Point(4, 47);
+        lblClassificationText.Name = "lblClassificationText";
+        lblClassificationText.Size = new Size(183, 40);
+        lblClassificationText.TabIndex = 8;
+        lblClassificationText.Text = "Classification value";
+        lblClassificationText.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // lblResultText
         // 
@@ -197,7 +197,7 @@ partial class DayNightClassifierForm
         lblResultText.Dock = DockStyle.Fill;
         lblResultText.Location = new Point(4, 1);
         lblResultText.Name = "lblResultText";
-        lblResultText.Size = new Size(183, 10);
+        lblResultText.Size = new Size(183, 45);
         lblResultText.TabIndex = 0;
         lblResultText.Text = "Classification result";
         lblResultText.TextAlign = ContentAlignment.MiddleCenter;
@@ -208,31 +208,31 @@ partial class DayNightClassifierForm
         lblResultClassificationValue.Dock = DockStyle.Fill;
         lblResultClassificationValue.Location = new Point(194, 1);
         lblResultClassificationValue.Name = "lblResultClassificationValue";
-        lblResultClassificationValue.Size = new Size(184, 10);
+        lblResultClassificationValue.Size = new Size(184, 45);
         lblResultClassificationValue.TabIndex = 4;
         lblResultClassificationValue.Text = "DAY/NIGHT";
         lblResultClassificationValue.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // groupBoxImageProcess
         // 
-        groupBoxImageProcess.Controls.Add(pictureBoxHighlightMask);
+        groupBoxImageProcess.Controls.Add(pictureBoxClassificationMask);
         groupBoxImageProcess.Dock = DockStyle.Fill;
         groupBoxImageProcess.Location = new Point(3, 123);
         groupBoxImageProcess.Name = "groupBoxImageProcess";
         groupBoxImageProcess.Size = new Size(388, 250);
         groupBoxImageProcess.TabIndex = 1;
         groupBoxImageProcess.TabStop = false;
-        groupBoxImageProcess.Text = "Image without highlights";
+        groupBoxImageProcess.Text = "Classification mask";
         // 
-        // pictureBoxHighlightMask
+        // pictureBoxClassificationMask
         // 
-        pictureBoxHighlightMask.Dock = DockStyle.Fill;
-        pictureBoxHighlightMask.Location = new Point(3, 23);
-        pictureBoxHighlightMask.Name = "pictureBoxHighlightMask";
-        pictureBoxHighlightMask.Size = new Size(382, 224);
-        pictureBoxHighlightMask.SizeMode = PictureBoxSizeMode.Zoom;
-        pictureBoxHighlightMask.TabIndex = 0;
-        pictureBoxHighlightMask.TabStop = false;
+        pictureBoxClassificationMask.Dock = DockStyle.Fill;
+        pictureBoxClassificationMask.Location = new Point(3, 23);
+        pictureBoxClassificationMask.Name = "pictureBoxClassificationMask";
+        pictureBoxClassificationMask.Size = new Size(382, 224);
+        pictureBoxClassificationMask.SizeMode = PictureBoxSizeMode.Zoom;
+        pictureBoxClassificationMask.TabIndex = 0;
+        pictureBoxClassificationMask.TabStop = false;
         // 
         // btnClose
         // 
@@ -266,7 +266,7 @@ partial class DayNightClassifierForm
         tableLayoutPanelInfo.ResumeLayout(false);
         tableLayoutPanelInfo.PerformLayout();
         groupBoxImageProcess.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)pictureBoxHighlightMask).EndInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBoxClassificationMask).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -287,7 +287,7 @@ partial class DayNightClassifierForm
     private Button btnClose;
     private OpenFileDialog openFileDialog;
     private Label lblResultClassificationValue;
-    private PictureBox pictureBoxHighlightMask;
+    private PictureBox pictureBoxClassificationMask;
     private Label lblBrightnessValue;
-    private Label lblBrightnessText;
+    private Label lblClassificationText;
 }

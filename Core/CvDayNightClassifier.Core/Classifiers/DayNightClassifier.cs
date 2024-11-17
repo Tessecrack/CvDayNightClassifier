@@ -21,23 +21,23 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// <summary>
         /// Высокий порог бинаризации (предполагаемые засветы).
         /// </summary>
-        private readonly int _highlightThreshold = 250;
+        private readonly int _upperThreshold = 250;
 
         /// <summary>
         /// Низкий порог бинаризации (предполагаемая ночь).
         /// </summary>
-        private readonly int _darkTimeThreshold = 50;
+        private readonly int _lowerThreshold = 50;
 
         /// <summary>
         /// Значение классификации день/ночь. Меньше - ночь, больше - день.
         /// </summary>
-        private readonly int _darkTimeClassifyValue = 65;
+        private readonly float _darkTimeClassifyValue = 0.7f;
 
         /// <summary>
         /// Метод классификации день/ночь по изображению.
         /// </summary>
         /// <param name="pathToImage">Путь к изображению.</param>
-        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску засветов.</returns>
+        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску классификации.</returns>
         public DayNightClassifierResultDTO ClassifyImage(string pathToImage)
         {
             Mat grayMat = new Mat(pathToImage, ImreadModes.Grayscale);
@@ -55,20 +55,23 @@ namespace CvDayNightClassifier.Core.Classifiers
         }
 
         /// <summary>
-        /// Классифицирует входную матрицу в оттенках серого.
+        /// Классифицирует входную бинарную матрицу с удалёнными засветами.
         /// </summary>
-        /// <param name="grayMat">Матрица в оттенках серого.</param>
-        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску засветов.</returns>
-        private DayNightClassifierResultDTO GetClassifierResult(Mat grayMat)
+        /// <param name="binaryRemovedHighlightsMat">Матрица в оттенках серого.</param>
+        /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску классификации.</returns>
+        private DayNightClassifierResultDTO GetClassifierResult(Mat binaryRemovedHighlightsMat)
         {
-            MCvScalar channelsMeanValues = CvInvoke.Mean(grayMat);
             var result = new DayNightClassifierResultDTO();
-            result.BrightnessValue = channelsMeanValues.V0;
-            result.DayNightClassification = result.BrightnessValue > _darkTimeClassifyValue
+
+            var whitePixels = CvInvoke.CountNonZero(binaryRemovedHighlightsMat);
+
+            result.ClassificationValue = (float)whitePixels / (float)(binaryRemovedHighlightsMat.Width * binaryRemovedHighlightsMat.Height);
+
+            result.DayNightClassification = result.ClassificationValue > _darkTimeClassifyValue
                 ? DayNightClassification.DAY
                 : DayNightClassification.NIGHT;
 
-            result.RemovedHighlightImage = grayMat;
+            result.ClassificationMask = binaryRemovedHighlightsMat;
 
             return result;
         }
@@ -84,16 +87,18 @@ namespace CvDayNightClassifier.Core.Classifiers
             CvInvoke.MedianBlur(srcMat, blurMat, _blurValue);
 
             // получение маски засветов (черное - засвет)
-            Mat highlightsBinaryMask = GetHighlightBinaryMask(blurMat);
+            Mat upperThresholdBinaryMask = GetHighlightBinaryMask(blurMat);
 
             // маска с низким порогом (_darkTimeThreshold) бинаризации
             // (белое - предполагаемый день, черное - предполагаемая ночь)
-            Mat darkTimeMask         = GetDarkTimeMask(blurMat);
+            Mat lowerThresholdBinaryMask         = GetLowerThresholdMask(blurMat);
 
             Mat overlayedMat = new Mat();
 
-            // наложение масок на блюр изображение
-            CvInvoke.BitwiseAnd(blurMat, darkTimeMask, overlayedMat, highlightsBinaryMask);
+            // наложение масок для получения маски классификации
+            CvInvoke.BitwiseAnd(upperThresholdBinaryMask, lowerThresholdBinaryMask, overlayedMat);
+
+            //CvInvoke.Imshow("g", overlayedMat);
 
             return overlayedMat;
         }
@@ -108,17 +113,17 @@ namespace CvDayNightClassifier.Core.Classifiers
             var highlightBinaryMask = new Mat();
 
             // предполагаемый засвет: белое - засвет для дальнейшей дилатации
-            CvInvoke.Threshold(srcMat, highlightBinaryMask, _highlightThreshold, 255, ThresholdType.Binary);
+            CvInvoke.Threshold(srcMat, highlightBinaryMask, _upperThreshold, 255, ThresholdType.Binary);
 
             var dilateCore = CvInvoke.GetStructuringElement(ElementShape.Ellipse,
                 new Size(_dilateHightlightSize, _dilateHightlightSize), 
-                new Point(2, 2));
+                new Point(-1, -1));
 
             Mat dilatedMat = new Mat();
 
-            // дилатация с 3-мя итерациями
+            // дилатация для "увеличения" засветов
             CvInvoke.Dilate(highlightBinaryMask, dilatedMat, dilateCore,
-                new Point(-1, -1), 3, BorderType.Default, new MCvScalar(255, 255, 255));
+                new Point(-1, -1), 10, BorderType.Default, new MCvScalar(255, 255, 255));
 
             Mat invertedMask = new Mat();
 
@@ -129,15 +134,15 @@ namespace CvDayNightClassifier.Core.Classifiers
         }
 
         /// <summary>
-        /// Получение маски с низким порогом бинаризации (_darkTimeThreshold).
+        /// Получение маски с низким порогом бинаризации (_lowerThreshold).
         /// </summary>
         /// <param name="srcMat">Изображение в оттенках серого.</param>
         /// <returns>Маска с низким порогом бинаризации.</returns>
-        private Mat GetDarkTimeMask(Mat srcMat)
+        private Mat GetLowerThresholdMask(Mat srcMat)
         {
-            Mat darkTimeMask = new Mat();
-            CvInvoke.Threshold(srcMat, darkTimeMask, _darkTimeThreshold, 255, ThresholdType.Binary);
-            return darkTimeMask;
+            Mat lowerThresholdMask = new Mat();
+            CvInvoke.Threshold(srcMat, lowerThresholdMask, _lowerThreshold, 255, ThresholdType.Binary);
+            return lowerThresholdMask;
         }
     }
 }

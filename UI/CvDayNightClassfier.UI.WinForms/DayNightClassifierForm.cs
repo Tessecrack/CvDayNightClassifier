@@ -25,8 +25,8 @@ public partial class DayNightClassifierForm : Form
                 var result = _classifier.ClassifyImage(openFileDialog.FileName); // классификация
 
                 lblResultClassificationValue.Text = result.DayNightClassification.ToString();
-                pictureBoxHighlightMask.Image     = result.RemovedHighlightImage.ToBitmap();
-                lblBrightnessValue.Text = ((int)result.BrightnessValue).ToString();
+                pictureBoxClassificationMask.Image     = result.ClassificationMask.ToBitmap();
+                lblBrightnessValue.Text = result.ClassificationValue.ToString("0.000");
 
                 
             }
