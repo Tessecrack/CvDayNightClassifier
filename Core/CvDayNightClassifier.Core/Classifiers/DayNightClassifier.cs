@@ -47,7 +47,7 @@ namespace CvDayNightClassifier.Core.Classifiers
 
         private DayNightClassifierResultDTO ClassifyImageImpl(Mat grayMat)
         {
-            Mat removedHighlightsMat = RemoveHighlights(grayMat);
+            Mat removedHighlightsMat = GetMaskClassificationWithoutHighlights(grayMat);
 
             var result = GetClassifierResult(removedHighlightsMat);
 
@@ -55,9 +55,9 @@ namespace CvDayNightClassifier.Core.Classifiers
         }
 
         /// <summary>
-        /// Классифицирует входную бинарную матрицу с удалёнными засветами.
+        /// Классифицирует входную бинарную матрицу классификации.
         /// </summary>
-        /// <param name="binaryRemovedHighlightsMat">Матрица в оттенках серого.</param>
+        /// <param name="binaryRemovedHighlightsMat">Бинарная матрица классификации.</param>
         /// <returns>Объект, содержащий результат классификации, значение яркости, итоговую маску классификации.</returns>
         private DayNightClassifierResultDTO GetClassifierResult(Mat binaryRemovedHighlightsMat)
         {
@@ -81,7 +81,7 @@ namespace CvDayNightClassifier.Core.Classifiers
         /// </summary>
         /// <param name="srcMat">Изображение в оттенках серого.</param>
         /// <returns>Матрица без засветов.</returns>
-        private Mat RemoveHighlights(Mat srcMat)
+        private Mat GetMaskClassificationWithoutHighlights(Mat srcMat)
         {
             Mat blurMat = new Mat();
             CvInvoke.MedianBlur(srcMat, blurMat, _medianBlurValue);
